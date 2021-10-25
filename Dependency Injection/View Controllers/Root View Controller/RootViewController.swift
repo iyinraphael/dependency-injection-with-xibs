@@ -16,14 +16,21 @@ class RootViewController: UIViewController {
     
     // MARK: -
     
-    var notes = [Note]()
+    private let notes: [Note]
     
     // MARK: - View Life Cycle
-
+    
+    init(with notes: [Note]) {
+        self.notes = notes
+        super.init(nibName: "RootViewController", bundle: Bundle.main)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // Register XIB for Cell Reuse Identifier
         let xib = UINib(nibName: NoteTableViewCell.reuseIdentifier, bundle: Bundle.main)
         tableView.register(xib, forCellReuseIdentifier: NoteTableViewCell.reuseIdentifier)
     }
@@ -62,9 +69,11 @@ extension RootViewController: UITableViewDataSource {
 }
 
 extension RootViewController: UITableViewDelegate {
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+        guard let indexPath = tableView.indexPathForSelectedRow else { return }
+        let note = notes[indexPath.row]
+        let detailVC = DetailViewController(with: note)
+        present(detailVC, animated: true)
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
